@@ -3,9 +3,11 @@ import { BASE_URL } from "./utils/Constants";
 
 const MainSection = () => {
     
-     const[foodData, setFoodData] = useState([])
+    const[foodData, setFoodData] = useState([])
     const [error, setError] = useState(null) 
     const [loading, setLoading] = useState(false)
+    const [searchText, setSearchText] = useState("")
+    const [listOfFood, setListOfFood] = useState([])
 
     const fetchData = async () => {
        
@@ -17,6 +19,7 @@ const MainSection = () => {
         const data = await  response.json();
           setLoading(false)
           setFoodData(data)
+          setListOfFood(data)
 
             
         } catch (error) {
@@ -30,7 +33,7 @@ const MainSection = () => {
         fetchData()
     }, [])
 
-    if (loading) return <div>Loading...0</div>
+    if (loading) return <div>Loading...</div>
 
     if(error) return <div>{error}</div>
 
@@ -45,16 +48,71 @@ const MainSection = () => {
            
             <div className="absolute top-20 left-[600px] z-10  ">
            <button className="bg-orange-600 text-white mr-2 px-2 py-1 text-sm 
-            rounded hover:bg-orange-800  hover:border-2 hover:border-white">All</button>
+            rounded hover:bg-orange-800  hover:border-2 hover:border-white"
+            onClick={() => {
+       
+        setFoodData(listOfFood);
+    }}
+            >All</button>
            <button className="bg-orange-600 text-white mr-2 px-2 py-1 text-sm
-            rounded hover:bg-orange-800 hover:border-2 hover:border-white">Breakfast</button>
+            rounded hover:bg-orange-800 hover:border-2 hover:border-white"
+            onClick={()=>{
+          const filteredFoodtype = listOfFood.filter((food)=>
+           food.type === "breakfast"
+            )
+            setFoodData(filteredFoodtype)
+            }}
+         >Breakfast</button>
            <button className="bg-orange-600 text-white mr-2 px-2 py-1 text-sm 
-           rounded hover:bg-orange-800 hover:border-2 hover:border-white">Lunch</button>
+           rounded hover:bg-orange-800 hover:border-2 hover:border-white"
+           onClick={()=>{
+          const filteredFoodtype = listOfFood.filter((food)=>
+           food.type === "lunch"
+            )
+            setFoodData(filteredFoodtype)
+            }}
+           
+           
+           >Lunch</button>
            <button className="bg-orange-600 text-white mr-2 px-2 py-1 text-sm 
-           rounded hover:bg-orange-800 hover:border-2 hover:border-white">Dinner</button>
+           rounded hover:bg-orange-800 hover:border-2 hover:border-white"
+           onClick={()=>{
+          const filteredFoodtype = listOfFood.filter((food)=>
+           food.type === "dinner"
+            )
+            setFoodData(filteredFoodtype)
+            }}
+           
+           
+           >Dinner</button>
            </div>
-           <input placeholder="search food..." className="absolute top-3 right-6 z-10 border-[1px]
-             rounded border-white bg-transparent text-white placeholder-white placeholder:font-bold px-2 py-1 text-sm  "/>
+           <div  className="absolute top-3 right-6 z-10">
+           <input placeholder="search food..." className=" border-[1px]
+             rounded border-white bg-transparent text-white placeholder-white placeholder:font-bold px-2 py-1 text-sm  "
+             value={searchText}
+             onChange={(e) =>{
+                setSearchText(e.target.value)
+             }}
+             />
+           <button className="bg-orange-600 text-white mr-2 ml-2 px-2 py-1 text-sm 
+           rounded hover:bg-orange-800 hover:border-2 hover:border-white"
+           onClick={() => {
+        // If search text is empty, reset foodData to original state
+        if (searchText.trim() === "") {
+            setFoodData(listOfFood);
+        } else {
+            // Filter food items based on search text
+            const filteredFoodItems = listOfFood.filter((food) =>
+                food.name.toLowerCase().includes(searchText.toLowerCase())
+            );
+            setFoodData(filteredFoodItems);
+        }
+    }}
+           >
+           Search
+           </button>
+           </div>
+          
 
 <div className="absolute top-[200px] left-[175px] z-10  rounded-md grid grid-cols-3 gap-5" >
      {foodData.map((item,index) =>(
